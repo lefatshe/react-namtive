@@ -1,75 +1,71 @@
 import React, {Component} from 'react';
-import {Text, Image, View, StyleSheet, Button, Alert, ActivityIndicator, ListView} from 'react-native';
+import {Text, Button, View, StyleSheet, TextInput} from 'react-native';
 
 export default class HelloWorldApp extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoading: true
-        }
+    state = {
+        placeName: '',
+        places: []
     }
 
-    componentDidMount() {
-        return fetch('https://facebook.github.io/react-native/movies.json')
-            .then((response) => response.json())
-            .then((responseJson) => {
-                let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-                this.setState({
-                    isLoading: false,
-                    dataSource: ds.cloneWithRows(responseJson.movies),
-                }, function() {
-                    // do something with new state
-                });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    placeNameChaneHandler = val => {
+        this.setState({
+            placeName: val
+        })
+    }
+
+    buttonPress = () => {
+        if (this.state.placeName.trim() === '') {
+            return;
+        }
+
+        this.setState(prev => {
+            return {
+                places: prev.places.concat(prev.placeName)
+            }
+        })
     }
 
     render() {
-        if (this.state.isLoading) {
-            return (
-                <View style={{flex: 1, paddingTop: 20}}>
-                    <ActivityIndicator />
-                </View>
-            );
-        }
+        const placesOutput = this.state.places.map(( place, i ) => (
+            <Text key={i}> {place} </Text>
+        ))
 
         return (
-            <View style={{flex: 1, paddingTop: 20, backGround: 'black'}}>
-                <Text style={styles.bigblue}>This is App.</Text>
-                <Button
-                    onPress={() => {
-                        Alert.alert('You tapped the button!');
-                    }}
-                    title="Press Me"
-                />
-                <Text style={styles.smallblue}>API CALLS-https://facebook.github.io/react-native/movies.json</Text>
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={
-                        (rowData) =>
-                        <Text>{rowData.title}, {rowData.releaseYear}</Text>
-                    }
-                />
+            <View style={styles.container}>
+                <View>
+                    <TextInput
+                        value={this.state.placeName}
+                        style={styles.textInput}
+                        onChangeText = {this.placeNameChaneHandler}
+                        placeholder="Type here to enter place"
+                    />
+
+                    <Button
+                        onPress={this.buttonPress}
+                        title="Add place"
+                        accessibilityLabel="Learn more about this purple button"
+                    />
+                </View>
+                <View style={styles.placeOutput}>
+                    {placesOutput}
+                </View>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    bigblue: {
-        color: 'black',
-        fontWeight: 'bold',
-        fontSize: 30,
-        paddingTop: 40,
-        textAlign: 'center'
+    container: {
+        flex: 1,
+        padding: 20,
     },
-    smallblue: {
-        color: 'black',
-        fontWeight: 'bold',
-        fontSize: 16,
-        paddingTop: 40,
-        textAlign: 'center'
+    textInput: {
+        //flex:1,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    placeOutput: {
+        flex: 1
     }
-});
+})
+
