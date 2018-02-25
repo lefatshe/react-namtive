@@ -1,59 +1,40 @@
-import React, {Component} from 'react';
-import {Text, Button, View, StyleSheet, TextInput} from 'react-native';
+import React, { Component } from "react";
+import { StyleSheet, View } from "react-native";
 
-import ListItem from './src/components/listItem'
+import PlaceInput from "./src/components/PlaceInput";
+import PlaceList from "./src/components/PlaceList";
 
-export default class HelloWorldApp extends Component {
+export default class App extends Component {
     state = {
-        placeName: '',
         places: []
-    }
+    };
 
-    placeNameChaneHandler = val => {
-        this.setState({
-            placeName: val
-        })
-    }
-
-    buttonPress = () => {
-        if (this.state.placeName.trim() === '') {
-            return;
-        }
-
-        this.setState(prev => {
+    placeAddedHandler = placeName => {
+        this.setState(prevState => {
             return {
-                places: prev.places.concat(prev.placeName)
-            }
-        })
-    }
+                places: prevState.places.concat(placeName)
+            };
+        });
+    };
+
+    placeDeletedHandler = index => {
+        this.setState(prevState => {
+            return {
+                places: prevState.places.filter((place, i) => {
+                    return i !== index;
+                })
+            };
+        });
+    };
 
     render() {
-        const placesOutput = this.state.places.map(( place, i ) => (
-            <ListItem
-                key={i}
-                placeName={place}
-                onItemPress={() => alert('Item Pressed: ' + i)}/>
-        ))
-
         return (
             <View style={styles.container}>
-                <View>
-                    <TextInput
-                        value={this.state.placeName}
-                        style={styles.textInput}
-                        onChangeText = {this.placeNameChaneHandler}
-                        placeholder="Type here to enter place"
-                    />
-
-                    <Button
-                        onPress={this.buttonPress}
-                        title="Add place"
-                        accessibilityLabel="Learn more about this purple button"
-                    />
-                </View>
-                <View style={styles.placeOutput}>
-                    {placesOutput}
-                </View>
+                <PlaceInput onPlaceAdded={this.placeAddedHandler} />
+                <PlaceList
+                    places={this.state.places}
+                    onItemDeleted={this.placeDeletedHandler}
+                />
             </View>
         );
     }
@@ -62,15 +43,9 @@ export default class HelloWorldApp extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-    },
-    textInput: {
-        //flex:1,
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    placeOutput: {
-        flex: 1
+        padding: 26,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "flex-start"
     }
-})
-
+});
