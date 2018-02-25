@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {Text, Button, View, StyleSheet, TextInput} from 'react-native';
 
+import ListItem from './src/components/listItem'
+
 export default class HelloWorldApp extends Component {
     state = {
         placeName: '',
@@ -27,7 +29,7 @@ export default class HelloWorldApp extends Component {
 
     render() {
         const placesOutput = this.state.places.map(( place, i ) => (
-            <Text key={i}> {place} </Text>
+            <ListItem key={i} placeName={place}/>
         ))
 
         return (
