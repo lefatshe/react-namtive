@@ -29,7 +29,10 @@ export default class HelloWorldApp extends Component {
 
     render() {
         const placesOutput = this.state.places.map(( place, i ) => (
-            <ListItem key={i} placeName={place}/>
+            <ListItem
+                key={i}
+                placeName={place}
+                onItemPress={() => alert('Item Pressed: ' + i)}/>
         ))
 
         return (
